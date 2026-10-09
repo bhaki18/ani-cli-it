@@ -31,6 +31,10 @@ A cli to browse and watch anime — <b>Italian fork</b> that scrapes <a href="ht
 ✨ <b>ani-skip integrato</b>: salto automatico di sigle iniziali e finali con <code>--skip</code>, senza installare nulla a parte (basato su <a href="https://github.com/synacktraa/ani-skip">synacktraa/ani-skip</a>).
 </h3>
 
+<h3 align="center">
+✅ <b>Tracker episodi visti</b>: mostra l'indicatore <code>[✓]</code> direttamente nella lista di selezione degli episodi già guardati.
+</h3>
+
 ## Table of Contents
 
 - [Risoluzione problemi](#risoluzione-problemi)
@@ -38,6 +42,7 @@ A cli to browse and watch anime — <b>Italian fork</b> that scrapes <a href="ht
 - [Disinstallazione](#disinstallazione)
 - [Dipendenze](#dipendenze)
   - [Salto sigle](#salto-sigle-ani-skip-integrato)
+  - [Tracker episodi visti](#tracker-episodi-visti)
 - [FAQ](#faq)
 - [Progetti simili](#homies)
 - [Crediti](#crediti)
@@ -206,6 +211,13 @@ Note:
 - Se l'anime non è riconosciuto o non ha tempi di salto, la riproduzione continua normale (nessun errore).
 - Puoi forzare l'anime con `--skip-title <mal_id>` (un numero = ID MyAnimeList) oppure `--skip-title "<titolo>"` (ricerca su MyAnimeList via Jikan).
 
+### Tracker episodi visti
+
+Rispetto alla versione upstream, questa versione include un **tracker visivo degli episodi visti**:
+- Nella lista interattiva di scelta episodi (`fzf`, `rofi`, `dmenu`), gli episodi già avviati in precedenza sono contrassegnati con **`[✓]`** (es. `1 [✓]`).
+- La selezione dell'episodio o di un range rimane invariata: l'indicatore viene rimosso automaticamente durante la selezione.
+- La cronologia degli episodi visti è salvata in `~/.local/state/ani-cli/watched` e può essere cancellata in qualsiasi momento con `ani-cli-it -D` o `ani-cli -D`.
+
 ## FAQ
 <details>
 
@@ -257,3 +269,4 @@ Se questo fork ti è utile, puoi offrirmi un caffè: aiuta a tenerlo aggiornato 
 - [synacktraa/ani-skip](https://github.com/synacktraa/ani-skip) — logica di salto sigle e plugin lua di mpv, qui reimplementati e integrati
 - [AnimeWorld](https://www.animeworld.ac/) — sorgente dei contenuti (Sub ITA / Doppiaggio ITA)
 - [aniskip API](https://api.aniskip.com) — tempi di OP/ED
+- [Angelo Del Piano](https://github.com/bhaki18) — tracker visivo episodi visti (`[✓]`)

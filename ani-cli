@@ -31,7 +31,7 @@ nth() {
     if [ "$line_start" = "$line_end" ]; then
         printf "%s" "$stdin" | grep -E '^'"${line}"'($|[[:space:]])' | cut -f2,3 || exit 1
     else
-        printf "%s" "$stdin" | sed -n '/^'"${line_start}"'$/,/^'"${line_end}$"'/p' || exit 1
+        printf "%s" "$stdin" | sed -nE '/^'"${line_start}"'([[:space:]]|$)/,/^'"${line_end}"'([[:space:]]|$)/p' || exit 1
     fi
 }
 
@@ -372,7 +372,37 @@ process_hist_entry() {
     [ -n "$ep_no" ] && printf "%s\t%s - episode %s\n" "$id" "$title" "$ep_no"
 }
 
+choose_episode() {
+    episodes_display=$(printf "%s\n" "$ep_list" | awk -v id="$id" -v wf="$watchedfile" '
+        BEGIN {
+            if (wf != "") {
+                while ((getline line < wf) > 0) {
+                    split(line, a, "\t")
+                    if (a[2] == id) watched[a[1]] = 1
+                }
+            }
+        }
+        {
+            if ($1 in watched) {
+                print $1 " [✓]"
+            } else {
+                print $1
+            }
+        }
+    ')
+    raw_ep=$(printf "%s\n" "$episodes_display" | nth "Select episode: " "$multi_selection_flag")
+    printf "%s\n" "$raw_ep" | sed -E 's/[[:space:]]*\[✓\]//g'
+}
+
+update_watched() {
+    [ -z "$id" ] || [ -z "$ep_no" ] && return 0
+    if ! grep -q -E "^${ep_no}[[:space:]]+${id}$" "$watchedfile" 2>/dev/null; then
+        printf "%s\t%s\n" "$ep_no" "$id" >>"$watchedfile"
+    fi
+}
+
 update_history() {
+    update_watched
     if grep -q -- "$id" "$histfile"; then
         sed -E "s|^[^	]+	${id}	[^	]+$|${ep_no}	${id}	${title}|" "$histfile" >"${histfile}.new"
     else
@@ -502,6 +532,8 @@ hist_dir="${ANI_CLI_HIST_DIR:-${XDG_STATE_HOME:-$HOME/.local/state}/ani-cli}"
 [ ! -d "$hist_dir" ] && mkdir -p "$hist_dir"
 histfile="$hist_dir/ani-hsts"
 [ ! -f "$histfile" ] && : >"$histfile"
+watchedfile="$hist_dir/watched"
+[ ! -f "$watchedfile" ] && : >"$watchedfile"
 search="${ANI_CLI_DEFAULT_SOURCE:-scrape}"
 branch="${ANI_CLI_BRANCH:-master}"
 update_check="${ANI_CLI_UPDATE_CHECK:-1}"
@@ -543,6 +575,7 @@ while [ $# -gt 0 ]; do
             ;;
         -D | --delete)
             : >"$histfile"
+            : >"$watchedfile"
             exit 0
             ;;
         -l | --logview)
@@ -653,7 +686,7 @@ case "$search" in
         anime_title="$(printf "%s" "$title" | cut -d'(' -f1 | tr -d '[:punct:]')"
         id=$(printf "%s" "$result" | cut -f1)
         ep_list=$(episodes_list "$id")
-        [ -z "$ep_no" ] && ep_no=$(printf "%s" "$ep_list" | nth "Select episode: " "$multi_selection_flag")
+        [ -z "$ep_no" ] && ep_no=$(choose_episode)
         [ -z "$ep_no" ] && exit 1
         ;;
 esac
@@ -679,7 +712,7 @@ while cmd=$(printf "next\nreplay\nprevious\nselect\nquit" | nth "Playing episode
         next) ep_no=$(printf "%s" "$ep_list" | sed -n "/^${ep_no}$/{n;p;}") 2>/dev/null ;;
         replay) episode="$replay" ;;
         previous) ep_no=$(printf "%s" "$ep_list" | sed -n "/^${ep_no}$/{g;1!p;};h") 2>/dev/null ;;
-        select) ep_no=$(printf "%s" "$ep_list" | nth "Select episode: " "$multi_selection_flag") ;;
+        select) ep_no=$(choose_episode) ;;
         *)
             cleanup
             exit 0
@@ -705,3 +738,4 @@ done
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 # Project repository: https://github.com/nicolagalassi/ani-cli-it (fork of https://github.com/pystardust/ani-cli)
+# Contributor: Angelo Del Piano (watched episodes tracking)
