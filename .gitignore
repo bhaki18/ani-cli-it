@@ -1,2 +1,7 @@
 # Serena / tooling metadata
 .serena/
+
+# Makepkg build artifacts
+*.pkg.tar.*
+pkg/
+src/

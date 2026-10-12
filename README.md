@@ -35,6 +35,10 @@ A cli to browse and watch anime — <b>Italian fork</b> that scrapes <a href="ht
 ✅ <b>Tracker episodi visti</b>: mostra l'indicatore <code>[✓]</code> direttamente nella lista di selezione degli episodi già guardati.
 </h3>
 
+<h3 align="center">
+⏩ <b>Resume automatico (<code>-c</code> / <code>--continue</code>)</b>: riprende all'istante la visione dall'episodio successivo a quello guardato più di recente.
+</h3>
+
 ## Table of Contents
 
 - [Risoluzione problemi](#risoluzione-problemi)
@@ -43,6 +47,7 @@ A cli to browse and watch anime — <b>Italian fork</b> that scrapes <a href="ht
 - [Dipendenze](#dipendenze)
   - [Salto sigle](#salto-sigle-ani-skip-integrato)
   - [Tracker episodi visti](#tracker-episodi-visti)
+  - [Resume automatico (-c / --continue)](#resume-automatico--c----continue)
 - [FAQ](#faq)
 - [Progetti simili](#homies)
 - [Crediti](#crediti)
@@ -218,6 +223,13 @@ Rispetto alla versione upstream, questa versione include un **tracker visivo deg
 - La selezione dell'episodio o di un range rimane invariata: l'indicatore viene rimosso automaticamente durante la selezione.
 - La cronologia degli episodi visti è salvata in `~/.local/state/ani-cli/watched` e può essere cancellata in qualsiasi momento con `ani-cli-it -D` o `ani-cli -D`.
 
+### Resume automatico (-c / --continue)
+
+Ispirato all'esperienza di [manga-cli](https://github.com/bhaki18/manga-cli), puoi riprendere la visione direttamente senza passaggi intermedi:
+- **`ani-cli -c`**: recupera l'ultimo anime visualizzato e riproduce automaticamente l'episodio successivo a quello guardato più di recente.
+- **`ani-cli <titolo> -c`** (o `ani-cli -c <titolo>`): cerca la serie indicata nella cronologia e fa partire subito l'episodio successivo.
+- Se sei già arrivato all'ultimo episodio disponibile, riapre l'ultimo episodio guardato.
+
 ## FAQ
 <details>
 
@@ -269,4 +281,4 @@ Se questo fork ti è utile, puoi offrirmi un caffè: aiuta a tenerlo aggiornato 
 - [synacktraa/ani-skip](https://github.com/synacktraa/ani-skip) — logica di salto sigle e plugin lua di mpv, qui reimplementati e integrati
 - [AnimeWorld](https://www.animeworld.ac/) — sorgente dei contenuti (Sub ITA / Doppiaggio ITA)
 - [aniskip API](https://api.aniskip.com) — tempi di OP/ED
-- [Angelo Del Piano](https://github.com/bhaki18) — tracker visivo episodi visti (`[✓]`)
+- [Angelo Del Piano](https://github.com/bhaki18) — tracker visivo episodi visti (`[✓]`) e resume automatico (`-c` / `--continue`)
